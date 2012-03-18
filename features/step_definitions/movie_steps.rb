@@ -20,7 +20,20 @@ end
 #  "When I check the following ratings: G"
 
 When /I (un)?check the following ratings: (.*)/ do |uncheck, rating_list|
-  # HINT: use String#split to split up the rating_list, then
-  #   iterate over the ratings and reuse the "When I check..." or
-  #   "When I uncheck..." steps in lines 89-95 of web_steps.rb
+  rating_list.gsub(' ','').split(',').each do |r|
+    self.send ((uncheck)?"uncheck":"check").to_sym, "ratings[#{r}]"
+  end
 end
+
+Then /I should (not )?see following movies: (.*)/ do |notsee, movie_titles|
+  method = (notsee) ? "has_no_content?" : "has_content?"
+  movie_titles.split(',').each do |movie_title|
+    if page.respond_to? :should
+      page.send method.to_sym, movie_title
+    else
+      assert page.send method.to_sym, movie_title
+    end
+  end
+end
+
+
