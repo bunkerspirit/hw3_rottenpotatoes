@@ -26,14 +26,26 @@ When /I (un)?check the following ratings: (.*)/ do |uncheck, rating_list|
 end
 
 Then /I should (not )?see following movies: (.*)/ do |notsee, movie_titles|
-  method = (notsee) ? "has_no_content?" : "has_content?"
+  method = (notsee) ? :has_no_content? : :has_content?
   movie_titles.split(',').each do |movie_title|
     if page.respond_to? :should
-      page.send method.to_sym, movie_title
+      page.send method, movie_title
     else
-      assert page.send method.to_sym, movie_title
+      assert page.send method, movie_title
     end
   end
 end
+
+Then /I should see (all of the|no) ?movies/ do |all|
+  method = (all != "no") ? :has_content? : :has_no_content?
+  Movie.all.each do |movie|
+    if all != "no"
+      page.has_content?(movie.title)
+    else
+      page.has_no_content?(movie.title)
+    end
+  end
+end
+
 
 

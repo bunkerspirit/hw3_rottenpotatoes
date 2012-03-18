@@ -29,7 +29,11 @@ Scenario: restrict to movies with 'PG' or 'R' ratings
   And I should not see following movies: Aladdin,The Help,Chocolat,2001: A Space Odyssey,Chicken Run
 
 Scenario: no ratings selected
-  # see assignment
+  When I uncheck the following ratings: G,PG,R,PG-13,NC-17
+  Then I press "ratings_submit"
+  Then I should see all of the movies
 
 Scenario: all ratings selected
-  # see assignment
+  When I check the following ratings: G,PG,R,PG-13,NC-17
+  Then I press "ratings_submit"
+  Then I should see no movies
