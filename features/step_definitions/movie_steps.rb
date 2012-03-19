@@ -29,9 +29,9 @@ Then /I should (not )?see following movies: (.*)/ do |notsee, movie_titles|
   method = (notsee) ? :has_no_content? : :has_content?
   movie_titles.split(',').each do |movie_title|
     if page.respond_to? :should
-      page.send method, movie_title
+      page.should page.send method, movie_title
     else
-      assert page.send method, movie_title
+      assert (page.send method, movie_title), "Check \""+notsee.to_s+"\" failed for "+movie_title
     end
   end
 end
@@ -40,9 +40,9 @@ Then /I should see (all of the|no) ?movies/ do |all|
   method = (all != "no") ? :has_content? : :has_no_content?
   Movie.all.each do |movie|
     if all != "no"
-      page.has_content?(movie.title)
+      assert (page.has_content?(movie.title)), "Failed to find movie " + movie.title
     else
-      page.has_no_content?(movie.title)
+      assert (page.has_no_content?(movie.title)), "Movie "+movie.title+" found"
     end
   end
 end
