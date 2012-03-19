@@ -6,18 +6,13 @@ Given /the following movies exist/ do |movies_table|
   end
 end
 
-# Make sure that one string (regexp) occurs before or after another one
-#   on the same page
-
 Then /I should see "(.*)" before "(.*)"/ do |e1, e2|
-  #  ensure that that e1 occurs before e2.
-  #  page.content  is the entire content of the page as a string.
-  assert false, "Unimplmemented"
+  e1_location = page.body.index(e1)
+  e2_location = page.body.index(e2)
+  assert !e1_location.nil?
+  assert !e2_location.nil?
+  assert e1_location < e2_location
 end
-
-# Make it easier to express checking or unchecking several boxes at once
-#  "When I uncheck the following ratings: PG, G, R"
-#  "When I check the following ratings: G"
 
 When /I (un)?check the following ratings: (.*)/ do |uncheck, rating_list|
   rating_list.gsub(' ','').split(',').each do |r|
@@ -37,7 +32,6 @@ Then /I should (not )?see following movies: (.*)/ do |notsee, movie_titles|
 end
 
 Then /I should see (all of the|no) ?movies/ do |all|
-  method = (all != "no") ? :has_content? : :has_no_content?
   Movie.all.each do |movie|
     if all != "no"
       assert (page.has_content?(movie.title)), "Failed to find movie " + movie.title
